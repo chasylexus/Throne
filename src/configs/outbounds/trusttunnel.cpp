@@ -63,6 +63,12 @@ namespace Configs {
             const auto text = QString::fromUtf8(value);
             const bool flag = !value.isEmpty() && value[0] != 0;
             switch (tag) {
+                case 0x00: {
+                    int at = 0;
+                    quint64 version = 0;
+                    if (!readVarInt(value, at, version) || version > 1) return false;
+                    break;
+                }
                 case 0x01: tls->server_name = text; break;
                 case 0x02: {
                     // Only the first address is kept: a profile has one server.
@@ -91,11 +97,11 @@ namespace Configs {
                 }
                 case 0x0B: client_random = text; break;
                 case 0x0C: name = text; break;
-                default: break; // version, has_ipv6, dns_upstreams and unknown tags
+                default: break; // has_ipv6, dns_upstreams and unknown tags
             }
         }
         tls->enabled = true;
-        return haveAddress && !username.isEmpty() && !password.isEmpty();
+        return haveAddress && !tls->server_name.isEmpty() && !username.isEmpty() && !password.isEmpty();
     }
 
     bool trusttunnel::ParseFromLink(const QString& link)
@@ -152,7 +158,8 @@ namespace Configs {
         if (!name.isEmpty()) url.setFragment(name);
 
         if (health_check) query.addQueryItem("health_check", "true");
-        if (quic && !congestion_control.isEmpty()) query.addQueryItem("congestion_control", congestion_control);
+        // The link carries QUIC only through congestion_control; sing-trusttunnel treats "" and "bbr" the same.
+        if (quic) query.addQueryItem("congestion_control", congestion_control.isEmpty() ? "bbr" : congestion_control);
         if (!custom_sni.isEmpty()) query.addQueryItem("custom_sni", custom_sni);
         if (!client_random.isEmpty()) query.addQueryItem("client_random", client_random);
         
