@@ -21,6 +21,7 @@ namespace Configs {
             quic = true;
             congestion_control = query.queryItemValue("congestion_control");
         }
+        if (query.hasQueryItem("custom_sni")) custom_sni = query.queryItemValue("custom_sni");
         if (query.hasQueryItem("client_random")) client_random = query.queryItemValue("client_random");
         
         tls->ParseFromLink(link);
@@ -40,6 +41,7 @@ namespace Configs {
         if (object.contains("health_check")) health_check = object["health_check"].toBool();
         if (object.contains("quic")) quic = object["quic"].toBool();
         if (object.contains("quic_congestion_control")) congestion_control = object["quic_congestion_control"].toString();
+        if (object.contains("custom_sni")) custom_sni = object["custom_sni"].toString();
         if (object.contains("client_random")) client_random = object["client_random"].toString();
         if (object.contains("tls")) tls->ParseFromJson(object["tls"].toObject());
         return true;
@@ -58,6 +60,7 @@ namespace Configs {
 
         if (health_check) query.addQueryItem("health_check", "true");
         if (quic && !congestion_control.isEmpty()) query.addQueryItem("congestion_control", congestion_control);
+        if (!custom_sni.isEmpty()) query.addQueryItem("custom_sni", custom_sni);
         if (!client_random.isEmpty()) query.addQueryItem("client_random", client_random);
         
         mergeUrlQuery(query, tls->ExportToLink());
@@ -79,6 +82,7 @@ namespace Configs {
             object["quic"] = quic;
             if (!congestion_control.isEmpty()) object["quic_congestion_control"] = congestion_control;
         }
+        if (!custom_sni.isEmpty()) object["custom_sni"] = custom_sni;
         if (!client_random.isEmpty()) object["client_random"] = client_random;
         if (tls->enabled) object["tls"] = tls->ExportToJson();
         return object;
@@ -96,6 +100,7 @@ namespace Configs {
             object["quic"] = quic;
             if (!congestion_control.isEmpty()) object["quic_congestion_control"] = congestion_control;
         }
+        if (!custom_sni.isEmpty()) object["custom_sni"] = custom_sni;
         if (!client_random.isEmpty()) object["client_random"] = client_random;
         if (tls->enabled) {
             auto tlsObject = tls->Build().object;

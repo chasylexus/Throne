@@ -10,6 +10,7 @@ namespace Configs
         QString username;
         QString password;
         QString congestion_control;
+        QString custom_sni;
         QString client_random;
         bool health_check = false;
         bool quic = false;
