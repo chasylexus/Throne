@@ -109,6 +109,10 @@ namespace Configs {
                 tlsObject.remove("utls");
                 tlsObject.remove("reality");
             }
+            // The official client mimics Chrome by default; QUIC dials through qtls, where uTLS is unavailable.
+            if (!quic && !tlsObject.contains("utls")) {
+                tlsObject["utls"] = QJsonObject{{"enabled", true}, {"fingerprint", "chrome"}};
+            }
             object["tls"] = tlsObject;
         }
         return {object, ""};
