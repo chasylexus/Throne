@@ -43,6 +43,7 @@ namespace API {
 
         // Ids already gone are a no-op; closedCount (optional) receives how many were actually live.
         QString CloseConnections(bool *rpcOK, const QStringList &ids, int *closedCount = nullptr) const;
+        QString UpdateRuleSets(bool *rpcOK, int *updatedCount = nullptr) const;
 
         QString CheckConfig(bool *rpcOK, const QString& config, bool isXray = false) const;
 

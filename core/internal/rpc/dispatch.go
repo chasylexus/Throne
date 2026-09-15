@@ -139,6 +139,7 @@ var handlers = map[string]handlerFn{
 	"SubmitVPNChallenge":  handle(globalServer.SubmitVPNChallenge),
 	"CancelVPNChallenge":  handle(globalServer.CancelVPNChallenge),
 	"CaptureDiagnostics":  handle(globalServer.CaptureDiagnostics),
+	"UpdateRuleSets":      handle(globalServer.UpdateRuleSets),
 	"StopDiagnostics":     handle(globalServer.StopDiagnostics),
 }
 

@@ -1,6 +1,7 @@
 #include "include/ui/mainwindow.h"
 
 #include "include/ui/mainWindow/MainWindowInternal.h"
+#include "include/api/RPC.h"
 // Full definition: MainWindow's destructor lives here and destroys the unique_ptr.
 #include "include/ui/mainWindow/TestRunner.h"
 
@@ -361,6 +362,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         m_autoSelectorDialog->activateWindow();
     });
     connect(ui->actionCheck_For_Update, &QAction::triggered, this, [=,this] { runOnNewThread([=,this] { CheckUpdate(); }); });
+    connect(ui->actionUpdate_External_Resources, &QAction::triggered, this, [=,this] {
+        runOnNewThread([=,this] {
+            bool rpcOK = false;
+            int updated = 0;
+            const auto error = API::defaultClient->UpdateRuleSets(&rpcOK, &updated);
+            runOnUiThread([=,this] {
+                if (!rpcOK || !error.isEmpty()) {
+                    MessageBoxWarning(tr("Update All External Resources"), error);
+                } else {
+                    MessageBoxInfo(tr("Update All External Resources"), tr("Updated %1 remote rule-sets").arg(updated));
+                }
+            });
+        });
+    });
     if (!QFile::exists(QApplication::applicationDirPath() + "/updater") && !QFile::exists(QApplication::applicationDirPath() + "/updater.exe"))
     {
         ui->actionCheck_For_Update->setDisabled(true);

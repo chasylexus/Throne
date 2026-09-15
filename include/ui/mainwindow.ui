@@ -779,6 +779,7 @@ QToolButton::menu-indicator {
     <addaction name="actionAuto_Selector"/>
     <addaction name="menu_open_dashboard"/>
     <addaction name="actionSpeedtest_Current"/>
+    <addaction name="actionUpdate_External_Resources"/>
     <addaction name="separator"/>
     <addaction name="menu_otp_manager"/>
     <addaction name="separator"/>
@@ -1332,6 +1333,14 @@ QToolButton::menu-indicator {
   <action name="actionCheck_For_Update">
    <property name="text">
     <string>Check For Update</string>
+   </property>
+  </action>
+  <action name="actionUpdate_External_Resources">
+   <property name="text">
+    <string>Update All External Resources</string>
+   </property>
+   <property name="toolTip">
+    <string>Refetch every remote rule-set of the running profile now</string>
    </property>
   </action>
  </widget>
