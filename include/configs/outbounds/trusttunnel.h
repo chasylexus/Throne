@@ -28,6 +28,7 @@ namespace Configs
             return tls;
         }
 
+        bool ParseFromDeepLink(const QString& payload);
         bool ParseFromLink(const QString& link) override;
         bool ParseFromJson(const QJsonObject& object) override;
         QString ExportToLink() override;
