@@ -5,10 +5,7 @@
 #include <QObject>
 #include <QSystemTrayIcon>
 
-// QSystemTrayIcon everywhere except macOS, where the status item is native: Qt 6.11.2
-// asks the current event for clickCount when the status item menu starts tracking, and
-// on macOS 27 that event is a gesture, so AppKit asserts and the app aborts. Fixed in
-// the Qt 6.11 branch (2026-08-04) but not in a release yet.
+// Native NSStatusItem on macOS: QSystemTrayIcon in Qt 6.11.2 and older aborts on macOS 27 (fixed for Qt 6.12.0).
 class TrayIcon : public QObject {
     Q_OBJECT
 public:

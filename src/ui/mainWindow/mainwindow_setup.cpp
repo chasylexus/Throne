@@ -1091,9 +1091,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         });
     }
 
-    // Starting hidden means starting as a menu bar app: no Dock icon until the window is shown.
-    if (Configs::dataManager->settingsRepo->flag_tray) HideWindow(this);
-    else show();
+    if (!Configs::dataManager->settingsRepo->flag_tray) show();
+    else if (tray->isVisible()) HideWindow(this);
 
     ui->data_view->setStyleSheet("background: transparent; border: none;");
 

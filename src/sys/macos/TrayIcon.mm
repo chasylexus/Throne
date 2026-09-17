@@ -1,5 +1,7 @@
 #include "include/ui/widget/TrayIcon.hpp"
 
+#include <QGuiApplication>
+
 #import <AppKit/AppKit.h>
 
 namespace {
@@ -20,8 +22,7 @@ TrayIcon::~TrayIcon() {
 }
 
 void TrayIcon::setIcon(const QIcon &icon) {
-    const auto devicePixelRatio = NSScreen.mainScreen ? NSScreen.mainScreen.backingScaleFactor : 2.0;
-    CGImageRef cgImage = icon.pixmap(QSize(kStatusIconPoints, kStatusIconPoints), devicePixelRatio).toImage().toCGImage();
+    CGImageRef cgImage = icon.pixmap(QSize(kStatusIconPoints, kStatusIconPoints), qGuiApp->devicePixelRatio()).toImage().toCGImage();
     NSImage *image = [[NSImage alloc] initWithCGImage:cgImage size:NSMakeSize(kStatusIconPoints, kStatusIconPoints)];
     CGImageRelease(cgImage);
     item(m_statusItem).button.image = image;
