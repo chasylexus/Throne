@@ -362,16 +362,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         m_autoSelectorDialog->activateWindow();
     });
     connect(ui->actionCheck_For_Update, &QAction::triggered, this, [=,this] { runOnNewThread([=,this] { CheckUpdate(); }); });
-    connect(ui->actionUpdate_External_Resources, &QAction::triggered, this, [=,this] {
+    connect(ui->actionUpdate_Rule_Sets, &QAction::triggered, this, [=,this] {
+        if (m_ruleSetUpdateBusy) return;
+        m_ruleSetUpdateBusy = true;
         runOnNewThread([=,this] {
             bool rpcOK = false;
             int updated = 0;
             const auto error = API::defaultClient->UpdateRuleSets(&rpcOK, &updated);
             runOnUiThread([=,this] {
-                if (!rpcOK || !error.isEmpty()) {
-                    MessageBoxWarning(tr("Update All External Resources"), error);
+                m_ruleSetUpdateBusy = false;
+                if (!rpcOK) {
+                    MessageBoxWarning(tr("Update Rule-Sets"), error);
+                    return;
+                }
+                const auto summary = tr("%n remote rule-set(s) refreshed", nullptr, updated);
+                if (!error.isEmpty()) {
+                    MessageBoxWarning(tr("Update Rule-Sets"), summary + "\n\n" + error);
                 } else {
-                    MessageBoxInfo(tr("Update All External Resources"), tr("Updated %1 remote rule-sets").arg(updated));
+                    MessageBoxInfo(tr("Update Rule-Sets"), summary);
                 }
             });
         });
@@ -810,6 +818,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     connect(ui->menuTools, &QMenu::aboutToShow, this, [=,this](){
         ui->actionSpeedtest_Current->setEnabled(running != nullptr);
+        ui->actionUpdate_Rule_Sets->setEnabled(running != nullptr && !m_ruleSetUpdateBusy);
     });
 
     connect(ui->actionAdd_New_Group, &QAction::triggered, this, [=,this]{

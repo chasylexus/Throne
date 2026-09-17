@@ -531,7 +531,9 @@ namespace API {
         libcore::EmptyReq request;
         libcore::UpdateRuleSetsResponse reply;
         std::vector<uint8_t> resp;
-        auto status = channel->Call("UpdateRuleSets", spb::pb::serialize<std::string>(request), resp);
+        // Must outlast the core's 60 s deadline in rulesets.go.
+        const int timeoutMs = 75000;
+        auto status = channel->Call("UpdateRuleSets", spb::pb::serialize<std::string>(request), resp, timeoutMs);
 
         if (status == LocalSocketChannel::CallOK && tryDeserialize(resp, reply)) {
             *rpcOK = true;
